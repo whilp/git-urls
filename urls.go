@@ -81,6 +81,9 @@ func ParseTransport(rawurl string) (u *url.URL, err error) {
 	if err == nil && !Transports.Valid(u.Scheme) {
 		err = fmt.Errorf("scheme %q is not a valid transport", u.Scheme)
 	}
+	if u.User == nil {
+		u.User = url.User("")
+	}
 	return u, err
 }
 

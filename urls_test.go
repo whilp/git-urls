@@ -118,9 +118,6 @@ func TestParse(t *testing.T) {
 			t.Errorf("Parse(%q) = unexpected err %q, want %q", tt.in, err, tt.want)
 			continue
 		}
-		if got.User == nil {
-			got.User = url.User("")
-		}
 
 		if !reflect.DeepEqual(got, tt.want) {
 			t.Errorf("Parse(%q) = %q, want %q", tt.in, got, tt.want)
