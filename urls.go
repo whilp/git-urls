@@ -43,6 +43,7 @@ var (
 	)
 )
 
+// Parser converts a string into a URL.
 type Parser func(string) (*url.URL, error)
 
 // Parse parses rawurl into a URL structure. Parse first attempts to
@@ -117,7 +118,7 @@ type TransportSet struct {
 
 // NewTransportSet returns a TransportSet with the items keys mapped
 // to empty struct values.
-func NewTransportSet(items... string) *TransportSet {
+func NewTransportSet(items ...string) *TransportSet {
 	t := &TransportSet{
 		Transports: map[string]struct{}{},
 	}
