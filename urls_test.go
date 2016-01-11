@@ -112,6 +112,10 @@ func init() {
 			NewResult("ssh", "", "host.xz", "/path/to/repo.git/"),
 		},
 		&Test{
+			"git+ssh://host.xz/path/to/repo.git/",
+			NewResult("git+ssh", "", "host.xz", "/path/to/repo.git/"),
+		},
+		&Test{
 			"/path/to/repo.git/",
 			NewResult("file", "", "", "/path/to/repo.git/"),
 		},

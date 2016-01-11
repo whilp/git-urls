@@ -34,6 +34,7 @@ var (
 	Transports = NewTransportSet(
 		"ssh",
 		"git",
+		"git+ssh",
 		"http",
 		"https",
 		"ftp",
