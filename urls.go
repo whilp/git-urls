@@ -29,7 +29,8 @@ import (
 )
 
 var (
-	scpSyntax = regexp.MustCompile(`([a-z]+@)?([a-z\.]+):([a-z/\.]+)`)
+	// scpSyntax was modified from https://golang.org/src/cmd/go/vcs.go.
+	scpSyntax = regexp.MustCompile(`^([a-zA-Z0-9_]+@)?([a-zA-Z0-9._-]+):(.*)$`)
 	// Transports is a set of known Git URL schemes.
 	Transports = NewTransportSet(
 		"ssh",
