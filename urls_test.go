@@ -15,17 +15,17 @@ type Test struct {
 
 type Result struct {
 	Transport string
-	User string
-	Host string
-	Path string
+	User      string
+	Host      string
+	Path      string
 }
 
 func NewResult(transport, user, host, path string) *Result {
 	return &Result{
 		Transport: transport,
-		User: user,
-		Host: host,
-		Path: path,
+		User:      user,
+		Host:      host,
+		Path:      path,
 	}
 }
 
@@ -44,7 +44,7 @@ func ResultFromURL(u *url.URL) *Result {
 	)
 }
 
-func init (){
+func init() {
 	// https://www.kernel.org/pub/software/scm/git/docs/git-clone.html
 	tests = []*Test{
 		&Test{
@@ -114,6 +114,10 @@ func init (){
 		&Test{
 			"ssh://host.xz/path/to/repo.git/",
 			NewResult("ssh", "", "host.xz", "/path/to/repo.git/"),
+		},
+		&Test{
+			"git+ssh://host.xz/path/to/repo.git/",
+			NewResult("git+ssh", "", "host.xz", "/path/to/repo.git/"),
 		},
 		&Test{
 			"/path/to/repo.git/",
