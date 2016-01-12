@@ -30,15 +30,19 @@ func init() {
 	tests = []*Test{
 		NewTest(
 			"user@host.xz:path/to/repo.git/",
-			"ssh", "user", "host.xz", "/path/to/repo.git/",
+			"ssh", "user", "host.xz", "path/to/repo.git/",
 		),
 		NewTest(
 			"host.xz:path/to/repo.git/",
+			"ssh", "", "host.xz", "path/to/repo.git/",
+		),
+		NewTest(
+			"host.xz:/path/to/repo.git/",
 			"ssh", "", "host.xz", "/path/to/repo.git/",
 		),
 		NewTest(
 			"host.xz:path/to/repo-with_specials.git/",
-			"ssh", "", "host.xz", "/path/to/repo-with_specials.git/",
+			"ssh", "", "host.xz", "path/to/repo-with_specials.git/",
 		),
 		NewTest(
 			"git://host.xz/path/to/repo.git/",

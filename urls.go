@@ -96,7 +96,7 @@ func ParseScp(rawurl string) (u *url.URL, err error) {
 		u.Scheme = "ssh"
 		u.User = url.User(strings.TrimRight(match[1], "@"))
 		u.Host = match[2]
-		u.Path = fmt.Sprintf("/%s", match[3])
+		u.Path = match[3]
 	} else {
 		err = fmt.Errorf("no scp URL found in %q", rawurl)
 	}
