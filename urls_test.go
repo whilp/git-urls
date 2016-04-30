@@ -14,13 +14,18 @@ type Test struct {
 }
 
 func NewTest(in, transport, user, host, path string) *Test {
+	var userinfo *url.Userinfo
+	if user != "" {
+		userinfo = url.User(user)
+	}
+
 	return &Test{
 		in: in,
 		want: &url.URL{
 			Scheme: transport,
 			Host:   host,
 			Path:   path,
-			User:   url.User(user),
+			User:   userinfo,
 		},
 	}
 }
