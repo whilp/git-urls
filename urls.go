@@ -78,6 +78,9 @@ func Parse(rawurl string) (u *url.URL, err error) {
 // scheme is a known Git transport, ParseTransport returns an error.
 func ParseTransport(rawurl string) (u *url.URL, err error) {
 	u, err = url.Parse(rawurl)
+	if err != nil {
+		return nil, err
+	}
 	if err == nil && !Transports.Valid(u.Scheme) {
 		err = fmt.Errorf("scheme %q is not a valid transport", u.Scheme)
 	}
