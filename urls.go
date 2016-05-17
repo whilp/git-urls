@@ -17,7 +17,9 @@
 /*
 Package giturls parses Git URLs.
 
-These URLs include standard RFC 3986 URLs as well as special formats that are specific to Git. Examples are provided in the Git documentation at https://www.kernel.org/pub/software/scm/git/docs/git-clone.html.
+These URLs include standard RFC 3986 URLs as well as special formats that
+are specific to Git. Examples are provided in the Git documentation at
+https://www.kernel.org/pub/software/scm/git/docs/git-clone.html.
 */
 package giturls
 
@@ -31,6 +33,7 @@ import (
 var (
 	// scpSyntax was modified from https://golang.org/src/cmd/go/vcs.go.
 	scpSyntax = regexp.MustCompile(`^([a-zA-Z0-9_]+@)?([a-zA-Z0-9._-]+):(.*)$`)
+
 	// Transports is a set of known Git URL schemes.
 	Transports = NewTransportSet(
 		"ssh",
@@ -76,42 +79,42 @@ func Parse(rawurl string) (u *url.URL, err error) {
 
 // ParseTransport parses rawurl into a URL object. Unless the URL's
 // scheme is a known Git transport, ParseTransport returns an error.
-func ParseTransport(rawurl string) (u *url.URL, err error) {
-	u, err = url.Parse(rawurl)
+func ParseTransport(rawurl string) (*url.URL, error) {
+	u, err := url.Parse(rawurl)
 	if err == nil && !Transports.Valid(u.Scheme) {
 		err = fmt.Errorf("scheme %q is not a valid transport", u.Scheme)
 	}
-	if u.User == nil {
+	if u != nil && u.User == nil {
 		u.User = url.User("")
 	}
 	return u, err
 }
 
-// ParseScp parses rawurl into a URL object. The rawurl must be an SCP-like URL, otherwise ParseScp returns an error.
-func ParseScp(rawurl string) (u *url.URL, err error) {
-	u = new(url.URL)
+// ParseScp parses rawurl into a URL object. The rawurl must be
+// an SCP-like URL, otherwise ParseScp returns an error.
+func ParseScp(rawurl string) (*url.URL, error) {
 	match := scpSyntax.FindAllStringSubmatch(rawurl, -1)
-	if len(match) > 0 {
-		match := match[0]
-		u.Scheme = "ssh"
-		u.User = url.User(strings.TrimRight(match[1], "@"))
-		u.Host = match[2]
-		u.Path = match[3]
-	} else {
-		err = fmt.Errorf("no scp URL found in %q", rawurl)
+	if len(match) == 0 {
+		return nil, fmt.Errorf("no scp URL found in %q", rawurl)
 	}
-	return u, err
+	m := match[0]
+	return &url.URL{
+		Scheme: "ssh",
+		User:   url.User(strings.TrimRight(m[1], "@")),
+		Host:   m[2],
+		Path:   m[3],
+	}, nil
 }
 
 // ParseLocal parses rawurl into a URL object with a "file"
 // scheme. This will effectively never return an error.
-func ParseLocal(rawurl string) (u *url.URL, err error) {
-	u = new(url.URL)
-	u.Scheme = "file"
-	u.User = url.User("")
-	u.Host = ""
-	u.Path = rawurl
-	return u, err
+func ParseLocal(rawurl string) (*url.URL, error) {
+	return &url.URL{
+		Scheme: "file",
+		User:   url.User(""),
+		Host:   "",
+		Path:   rawurl,
+	}, nil
 }
 
 // TransportSet represents a set of valid Git transport schemes. It
