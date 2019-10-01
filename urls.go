@@ -84,9 +84,6 @@ func ParseTransport(rawurl string) (*url.URL, error) {
 	if err == nil && !Transports.Valid(u.Scheme) {
 		err = fmt.Errorf("scheme %q is not a valid transport", u.Scheme)
 	}
-	if u != nil && u.User == nil {
-		u.User = url.User("")
-	}
 	return u, err
 }
 
@@ -98,9 +95,14 @@ func ParseScp(rawurl string) (*url.URL, error) {
 		return nil, fmt.Errorf("no scp URL found in %q", rawurl)
 	}
 	m := match[0]
+	user := strings.TrimRight(m[1], "@")
+	var userinfo *url.Userinfo
+	if user != "" {
+		userinfo = url.User(user)
+	}
 	return &url.URL{
 		Scheme: "ssh",
-		User:   url.User(strings.TrimRight(m[1], "@")),
+		User:   userinfo,
 		Host:   m[2],
 		Path:   m[3],
 	}, nil
@@ -111,7 +113,6 @@ func ParseScp(rawurl string) (*url.URL, error) {
 func ParseLocal(rawurl string) (*url.URL, error) {
 	return &url.URL{
 		Scheme: "file",
-		User:   url.User(""),
 		Host:   "",
 		Path:   rawurl,
 	}, nil
