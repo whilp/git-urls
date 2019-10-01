@@ -4,4 +4,4 @@ go:
   - 1.5
   
 install:
-  - make deps install
+  - make deps install lint test
