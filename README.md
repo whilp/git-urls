@@ -1,3 +1,3 @@
 # git-urls
 
-Docs: http://godoc.org/github.com/whilp/git-urls
+Docs: https://pkg.go.dev/github.com/whilp/git-urls?tab=overview
