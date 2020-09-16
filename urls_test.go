@@ -194,6 +194,11 @@ func init() {
 			"https", "user:password", "host.xz", "/organization/repo.git",
 			"", "ref=feature/test",
 		),
+		NewTest(
+			"user-1234@host.xz:path/to/repo.git/",
+			"ssh", "user-1234", "host.xz", "path/to/repo.git/",
+			"ssh://user-1234@host.xz/path/to/repo.git/", "",
+		),
 	}
 }
 
