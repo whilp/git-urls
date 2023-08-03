@@ -5,12 +5,12 @@ test:
 	go test -covermode=count -coverprofile=profile.cov .
 
 lint:
-	gometalinter ./...
+	golangci-lint run
 
 install:
 	go get -d -v ./... && go build -v ./...
 	gometalinter --install --update
 
 deps:
-	go get github.com/alecthomas/gometalinter
+	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.53.3
 	go get golang.org/x/tools/cmd/cover
