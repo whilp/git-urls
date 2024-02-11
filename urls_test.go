@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 )
 
 var tests []*Test
@@ -216,5 +217,23 @@ func TestParse(t *testing.T) {
 		if str != tt.wantStr {
 			t.Errorf("Parse(%q).String() = %q, want %q", tt.in, str, tt.wantStr)
 		}
+	}
+}
+
+func TestRegex(t *testing.T) {
+	var payload = strings.Repeat("////", 19000000) //payload used, the number can be tweaked to cause 7 second delay
+	malicious_url := "6en6ar@-:0////" + payload + `\`
+	begin := time.Now()
+	//u, err := giturls.ParseScp("remote_username@10.10.0.2:/remote/directory")// normal git url
+	u, err := ParseScp(malicious_url)
+	// _, err := ParseScp(malicious_url)
+	if err != nil {
+		t.Errorf("unable to call ParseScp: %s", err.Error())
+	}
+	t.Logf("[ + ] Url --> %+v", u.Host)
+	elapse := time.Since(begin)
+	t.Logf("Function took %+v", elapse)
+	if elapse > time.Second*5 {
+		t.Errorf("regex took %+v seconds", elapse)
 	}
 }
