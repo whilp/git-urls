@@ -6,6 +6,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var tests []*Test
@@ -220,20 +222,36 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func TestRegex(t *testing.T) {
-	var payload = strings.Repeat("////", 19000000) //payload used, the number can be tweaked to cause 7 second delay
-	malicious_url := "6en6ar@-:0////" + payload + `\`
+func runTimingTest(t *testing.T, url string, shouldError bool) {
 	begin := time.Now()
-	//u, err := giturls.ParseScp("remote_username@10.10.0.2:/remote/directory")// normal git url
-	u, err := ParseScp(malicious_url)
-	// _, err := ParseScp(malicious_url)
-	if err != nil {
-		t.Errorf("unable to call ParseScp: %s", err.Error())
+
+	_, err := ParseScp(url)
+	if shouldError {
+		assert.Errorf(t, err, "len of %d should trigger error", len(url))
+	} else {
+		if t == nil {
+			panic("t is nil")
+		}
+		assert.Nilf(t, err, "unexpected error: %v", err)
 	}
-	t.Logf("[ + ] Url --> %+v", u.Host)
-	elapse := time.Since(begin)
-	t.Logf("Function took %+v", elapse)
-	if elapse > time.Second*5 {
-		t.Errorf("regex took %+v seconds", elapse)
-	}
+	elapsed := time.Since(begin)
+	t.Logf("url len is %d, function took %+v", len(url), elapsed)
+}
+
+// TestRegex tests to see if we have an excessively long URL
+func TestRegex(t *testing.T) {
+
+	// First case is 7909 bytes which4yy should still be fast
+	long_url := `https://=` + strings.Repeat(`/`, 7900)
+	runTimingTest(t, long_url, false)
+
+	// Second case is 20,000 bytes which should be too slow
+	long_url = `https://=` + strings.Repeat(`/`, 190000000)
+	runTimingTest(t, long_url, true)
+
+	goodURL := `https://stackoverflow.com/q/417142/31319`
+	runTimingTest(t, goodURL, false)
+
+	goodURL = `https://kinesis-ergo.com/wp-content/uploads/Advantage360-SmartSet-KB360-Users-Manual-v10-12-22.pdf`
+	runTimingTest(t, goodURL, false)
 }
