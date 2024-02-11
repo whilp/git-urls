@@ -1,4 +1,4 @@
-module github.com/mojotx/git-urls
+module github.com/whilp/git-urls
 
 go 1.13
 
