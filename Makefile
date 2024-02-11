@@ -1,16 +1,19 @@
 default: test lint
+LINT=golangci-lint run
 
 test:
 	go test -v ./...
 	go test -covermode=count -coverprofile=profile.cov .
 
 lint:
-	gometalinter ./...
+	$(LINT) ./...
 
 install:
 	go get -d -v ./... && go build -v ./...
-	gometalinter --install --update
+	$(LINT) ./...
 
 deps:
-	go get github.com/alecthomas/gometalinter
-	go get golang.org/x/tools/cmd/cover
+	# binary will be $(go env GOPATH)/bin/golangci-lint
+	go mod download -x
+	go mod verify
+	go mod tidy -v

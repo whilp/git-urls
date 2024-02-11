@@ -5,6 +5,9 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var tests []*Test
@@ -217,4 +220,34 @@ func TestParse(t *testing.T) {
 			t.Errorf("Parse(%q).String() = %q, want %q", tt.in, str, tt.wantStr)
 		}
 	}
+}
+
+// TestRegex tests to see if we have an excessively long URL
+func TestRegex(t *testing.T) {
+
+	// inner function for repeating tests
+	runTimingTest := func(url string, shouldError bool) {
+		begin := time.Now()
+
+		_, err := ParseScp(url)
+		if shouldError {
+			assert.Errorf(t, err, "len of %d should trigger error", len(url))
+		} else {
+			assert.Nilf(t, err, "unexpected error: %v", err)
+		}
+		elapsed := time.Since(begin)
+		t.Logf("url len is %d, function took %+v", len(url), elapsed)
+	}
+
+	// First case is 7909 bytes which should still be fast
+	runTimingTest(`https://=`+strings.Repeat(`/`, 7900), false)
+
+	// Second case is 190,000,000 bytes which should be too slow
+	runTimingTest(`https://=`+strings.Repeat(`/`, 190000000), true)
+
+	// Real URL
+	runTimingTest(`https://stackoverflow.com/q/417142/31319`, false)
+
+	// Another real URL
+	runTimingTest(`https://github.com/whilp/git-urls.git`, false)
 }

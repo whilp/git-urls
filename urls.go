@@ -48,6 +48,8 @@ var (
 	)
 )
 
+const maxUrlLen = 8000
+
 // Parser converts a string into a URL.
 type Parser func(string) (*url.URL, error)
 
@@ -90,6 +92,15 @@ func ParseTransport(rawurl string) (*url.URL, error) {
 // ParseScp parses rawurl into a URL object. The rawurl must be
 // an SCP-like URL, otherwise ParseScp returns an error.
 func ParseScp(rawurl string) (*url.URL, error) {
+
+	// Did some research on https://stackoverflow.com/q/417142/31319
+	// and for best results, URLs should not be more than about 2000
+	// bytes. Some sites support up to 8000 bytes but that isn't
+	// widespread yet. We will try using 8000 first.
+	if len(rawurl) >= maxUrlLen {
+		return nil, fmt.Errorf("URL too long (%d >= %d)", len(rawurl), maxUrlLen)
+	}
+
 	match := scpSyntax.FindAllStringSubmatch(rawurl, -1)
 	if len(match) == 0 {
 		return nil, fmt.Errorf("no scp URL found in %q", rawurl)
