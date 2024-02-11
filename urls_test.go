@@ -233,9 +233,6 @@ func TestRegex(t *testing.T) {
 		if shouldError {
 			assert.Errorf(t, err, "len of %d should trigger error", len(url))
 		} else {
-			if t == nil {
-				panic("t is nil")
-			}
 			assert.Nilf(t, err, "unexpected error: %v", err)
 		}
 		elapsed := time.Since(begin)
